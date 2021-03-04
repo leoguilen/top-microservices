@@ -1,0 +1,93 @@
+version: '3.7'
+
+services:
+  identity-sql-db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: identity-sql-db
+    hostname: identity-sql-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=srvSql21#
+      - MSSQL_TCP_PORT=1433
+    ports:
+      - "1433:1433"
+    volumes:
+      - identity-sql-db-data:/var/opt/mssql
+    networks:
+      - top-net
+
+  # tools
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=This_is_my_secret_phrase
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - CLUSTERED=true
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbit-data:/var/lib/rabbitmq
+    networks:
+      - top-net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    container_name: elasticsearch
+    hostname: elasticsearch
+    environment:
+      - dicovery.type=single-node
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "9200:9200"
+    volumes:
+      - type: volume
+        source: logs
+        target: /var/log
+      - type: volume
+        source: esdata
+        target: /usr/share/elasticsearch/data
+    networks:
+      - top-net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    container_name: kibana
+    hostname: kibana
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_URL: http://elasticsearch:9200/
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "5601:5601"
+    volumes:
+      - type: volume
+        source: logs
+        target: /var/log
+    depends_on:
+     - elasticsearch
+    networks:
+      - top-net
+
+volumes:
+  identity-sql-db-data:
+    driver: local
+  rabbit-data:
+    driver: local
+  esdata:
+    driver: local
+  logs:
+    driver: local
+
+
+networks:
+  top-net:
+    driver: bridge
