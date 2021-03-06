@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="NETCore.MailKit" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TOP.NotificationConsumer.Domain\TOP.NotificationConsumer.Domain.csproj" />
+    <ProjectReference Include="..\TOP.NotificationConsumer.Infra.Broker\TOP.NotificationConsumer.Infra.Broker.csproj" />
+    <ProjectReference Include="..\TOP.NotificationConsumer.Infra.CrossCutting.Logger\TOP.NotificationConsumer.Infra.CrossCutting.Logger.csproj" />
+  </ItemGroup>
+
+</Project>

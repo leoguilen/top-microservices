@@ -1,0 +1,96 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System;
+using System.Text;
+using System.Threading.Tasks;
+using TOP.NotificationConsumer.Domain.Configurations;
+using TOP.NotificationConsumer.Domain.Interfaces.Domain;
+using TOP.NotificationConsumer.Domain.Interfaces.Infra;
+using TOP.NotificationConsumer.Domain.Models.Message;
+using TOP.NotificationConsumer.Infra.Broker.Helpers;
+
+namespace TOP.NotificationConsumer.Infra.Broker.RabbitMq
+{
+    public class RabbitMqConsumer : IConsumer
+    {
+        private readonly RabbitMqConfiguration _config;
+        private readonly IRabbitMqClient _client;
+        private readonly IMessageParser _parser;
+        private readonly ILogWriter _logWriter;
+        private readonly IServiceScopeFactory _scopeFactory;
+
+        public RabbitMqConsumer(
+            RabbitMqConfiguration config,
+            IRabbitMqClient client,
+            IMessageParser parser,
+            ILogWriter logWriter,
+            IServiceScopeFactory scopeFactory)
+        {
+            _config = config;
+            _client = client;
+            _parser = parser;
+            _logWriter = logWriter;
+            _scopeFactory = scopeFactory;
+        }
+
+        public Task Consume()
+        {
+            var correlationId = Guid.NewGuid();
+            _logWriter.Info("starting consumer");
+
+            var consumer = new AsyncEventingBasicConsumer(_client.Channel);
+            consumer.Received += async (_, e) => await OnReceive(e);
+
+            _client.Channel.BasicConsume(_config.QueueName, false, consumer);
+            _logWriter.Info("consumer started");
+
+            return Task.CompletedTask;
+        }
+
+        private async Task OnReceive(BasicDeliverEventArgs args)
+        {
+            var correlationId = _parser.ParseCorrelationId(args);
+
+            try
+            {
+                await HandleMessage(args, correlationId);
+            }
+            catch (Exception ex)
+            {
+                HandleConsumeError(args, ex);
+            }
+        }
+
+        private async Task HandleMessage(BasicDeliverEventArgs args, Guid correlationId)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            
+            var message = GetValidMessage(args);
+            var handler = scope.ServiceProvider.GetRequiredService<INotificationSender>();
+         
+            await handler
+                .SetAction(args.RoutingKey)
+                .Handle(message);
+
+            _client.Channel.BasicAck(args.DeliveryTag, false);
+            _logWriter.CorrelationId = correlationId;
+            _logWriter.Info("message consumed successfully", message);
+        }
+
+        private UserMessage GetValidMessage(BasicDeliverEventArgs args)
+        {
+            var message = _parser.ParseMessage<UserMessage>(args);
+            return message;
+        }
+
+        private void HandleConsumeError(BasicDeliverEventArgs args, Exception ex)
+        {
+            var body = args.Body.ToArray();
+            var payload = Encoding.UTF8.GetString(body);
+
+            _logWriter.Error("error consuming message", payload, ex);
+            _client.Channel.BasicNack(args.DeliveryTag, false, false);
+        }
+    }
+}

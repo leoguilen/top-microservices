@@ -1,22 +1,22 @@
 version: '3.7'
 
 services:
-  identity-sql-db:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: identity-sql-db
-    hostname: identity-sql-db
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=srvSql21#
-      - MSSQL_TCP_PORT=1433
-    ports:
-      - "1433:1433"
-    volumes:
-      - type: volume
-        source: identity-sql-db-data
-        target: /var/opt/mssql
-    networks:
-      - top-net
+  # identity-sql-db:
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   container_name: identity-sql-db
+  #   hostname: identity-sql-db
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - MSSQL_SA_PASSWORD=srvSql21#
+  #     - MSSQL_TCP_PORT=1433
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - type: volume
+  #       source: identity-sql-db-data
+  #       target: /var/opt/mssql
+  #   networks:
+  #     - top-net
 
   # tools
 
@@ -39,43 +39,43 @@ services:
     networks:
       - top-net
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
-    container_name: elasticsearch
-    hostname: elasticsearch
-    restart: always
-    environment:
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-    ports:
-      - "9200:9200"
-    volumes:
-      - type: volume
-        source: logs
-        target: /var/log
-      - type: volume
-        source: esdata
-        target: /usr/share/elasticsearch/data
-    networks:
-      - top-net
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+  #   container_name: elasticsearch
+  #   hostname: elasticsearch
+  #   restart: always
+  #   environment:
+  #     - xpack.security.enabled=false
+  #     - discovery.type=single-node
+  #   ports:
+  #     - "9200:9200"
+  #   volumes:
+  #     - type: volume
+  #       source: logs
+  #       target: /var/log
+  #     - type: volume
+  #       source: esdata
+  #       target: /usr/share/elasticsearch/data
+  #   networks:
+  #     - top-net
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.8.0
-    container_name: kibana
-    hostname: kibana
-    restart: always
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    volumes:
-      - type: volume
-        source: logs
-        target: /var/log
-    depends_on:
-     - elasticsearch
-    networks:
-      - top-net
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:7.8.0
+  #   container_name: kibana
+  #   hostname: kibana
+  #   restart: always
+  #   environment:
+  #     ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+  #   ports:
+  #     - "5601:5601"
+  #   volumes:
+  #     - type: volume
+  #       source: logs
+  #       target: /var/log
+  #   depends_on:
+  #    - elasticsearch
+  #   networks:
+  #     - top-net
 
 volumes:
   identity-sql-db-data:
