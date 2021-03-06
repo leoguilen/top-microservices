@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR.Extensions.FluentValidation.AspNetCore" Version="1.1.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="5.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TOP.IdentityService.Application\TOP.IdentityService.Application.csproj" />
+    <ProjectReference Include="..\TOP.IdentityService.Domain\TOP.IdentityService.Domain.csproj" />
+    <ProjectReference Include="..\TOP.IdentityService.Infra.Broker\TOP.IdentityService.Infra.Broker.csproj" />
+    <ProjectReference Include="..\TOP.IdentityService.Infra.CrossCutting.Logger\TOP.IdentityService.Infra.CrossCutting.Logger.csproj" />
+    <ProjectReference Include="..\TOP.IdentityService.Infra.Data\TOP.IdentityService.Infra.Data.csproj" />
+  </ItemGroup>
+
+</Project>
