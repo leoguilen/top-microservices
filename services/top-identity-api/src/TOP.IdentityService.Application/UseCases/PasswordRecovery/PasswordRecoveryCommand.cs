@@ -34,7 +34,7 @@ namespace TOP.IdentityService.Application.UseCases.PasswordRecovery
                 await _mediator.Publish(new PasswordRecoveryRequestEvent 
                 {
                     Email = request.Email,
-                    ConfirmationResetPasswordToken = result.Item2
+                    Token = result.Item2
                 }, 
                 cancellationToken);
             }

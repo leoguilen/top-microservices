@@ -35,8 +35,8 @@ namespace TOP.IdentityService.Application.UseCases.Register
             {
                 await _mediator.Publish(new RegisteredEvent 
                 { 
-                    User = authenticationResult.Item2, 
-                    ConfirmationEmailToken = authenticationResult.Item3 
+                    User = authenticationResult.Item2,
+                    Token = authenticationResult.Item3 
                 }, 
                 cancellationToken);
             }

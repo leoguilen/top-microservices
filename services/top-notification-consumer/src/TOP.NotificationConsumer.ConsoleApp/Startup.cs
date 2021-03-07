@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
+using System.Reflection;
 using TOP.NotificationConsumer.Infra.CrossCutting.Ioc.DependencyInjection;
 
 namespace TOP.NotificationConsumer.ConsoleApp
@@ -13,6 +14,7 @@ namespace TOP.NotificationConsumer.ConsoleApp
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false, true)
                 .AddEnvironmentVariables()
+                .AddUserSecrets(Assembly.GetExecutingAssembly())
                 .Build();
 
             return new ServiceCollection()

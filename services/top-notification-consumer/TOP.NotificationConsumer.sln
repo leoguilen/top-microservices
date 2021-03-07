@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TOP.NotificationConsumer.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TOP.NotificationConsumer.UnitTest", "test\TOP.NotificationConsumer.UnitTest\TOP.NotificationConsumer.UnitTest.csproj", "{39CA1E2A-B604-4501-A62F-54F2AC525705}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TOP.NotificationConsumer.ConsoleApp", "src\TOP.NotificationConsumer.ConsoleApp\TOP.NotificationConsumer.ConsoleApp.csproj", "{5D71C886-9D5E-4015-B1F0-833F98C8FD57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TOP.NotificationConsumer.ConsoleApp", "src\TOP.NotificationConsumer.ConsoleApp\TOP.NotificationConsumer.ConsoleApp.csproj", "{5D71C886-9D5E-4015-B1F0-833F98C8FD57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

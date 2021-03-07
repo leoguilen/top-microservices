@@ -10,7 +10,7 @@ namespace TOP.IdentityService.Application.UseCases.Register
     public class RegisteredEvent : INotification
     {
         public ApplicationUser User { get; set; }
-        public string ConfirmationEmailToken { get; set; }
+        public string Token { get; set; }
     }
 
     public class RegisteredEventHandler : INotificationHandler<RegisteredEvent>
@@ -30,7 +30,7 @@ namespace TOP.IdentityService.Application.UseCases.Register
                 notification.User.Email,
                 notification.User.UserName,
                 notification.User.PhoneNumber,
-                notification.ConfirmationEmailToken
+                notification.Token
             };
 
             await _producer.Publish(eventData, RoutingKeys.RegisterUser);

@@ -9,7 +9,7 @@ namespace TOP.IdentityService.Application.UseCases.PasswordRecovery
     public class PasswordRecoveryRequestEvent : INotification
     {
         public string Email { get; set; }
-        public string ConfirmationResetPasswordToken { get; set; }
+        public string Token { get; set; }
     }
 
     public class PasswordRecoveryRequestEventHandler : INotificationHandler<PasswordRecoveryRequestEvent>
@@ -26,7 +26,7 @@ namespace TOP.IdentityService.Application.UseCases.PasswordRecovery
             var eventData = new
             {
                 notification.Email,
-                notification.ConfirmationResetPasswordToken
+                notification.Token
             };
 
             await _producer.Publish(eventData, RoutingKeys.ResetUserPassword);

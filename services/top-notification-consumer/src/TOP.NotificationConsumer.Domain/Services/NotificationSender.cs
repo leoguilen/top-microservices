@@ -52,8 +52,8 @@ namespace TOP.NotificationConsumer.Domain.Services
         {
             try
             {
-                await _sender.SendAsync(args.Email, _subject.Replace("@token", args.Token), _message, false);
-                _logWriter.Error($"email sended to {args.Email}", args);
+                await _sender.SendAsync(args.Email, _subject, _message.Replace("@token", args.Token), false);
+                _logWriter.Error($"email sended to {args.Email}");
             }
             catch (SmtpCommandException smtpEx)
             {
