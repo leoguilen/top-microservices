@@ -58,7 +58,7 @@ namespace TOP.NotificationConsumer.Infra.Broker.RabbitMq
             }
             catch (Exception ex)
             {
-                HandleConsumeError(args, ex);
+                HandleConsumeError(args, correlationId, ex);
             }
         }
 
@@ -84,13 +84,14 @@ namespace TOP.NotificationConsumer.Infra.Broker.RabbitMq
             return message;
         }
 
-        private void HandleConsumeError(BasicDeliverEventArgs args, Exception ex)
+        private void HandleConsumeError(BasicDeliverEventArgs args, Guid correlationId, Exception ex)
         {
             var body = args.Body.ToArray();
             var payload = Encoding.UTF8.GetString(body);
 
             _logWriter.Error("error consuming message", payload, ex);
-            _client.Channel.BasicNack(args.DeliveryTag, false, false);
+            _logWriter.CorrelationId = correlationId;
+            _client.Channel.BasicNack(args.DeliveryTag, false, true);
         }
     }
 }

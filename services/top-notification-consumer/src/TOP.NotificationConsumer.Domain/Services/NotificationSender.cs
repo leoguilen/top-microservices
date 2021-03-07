@@ -52,7 +52,7 @@ namespace TOP.NotificationConsumer.Domain.Services
         {
             try
             {
-                await _sender.SendAsync(args.Email, _subject, _message, false);
+                await _sender.SendAsync(args.Email, _subject.Replace("@token", args.Token), _message, false);
                 _logWriter.Error($"email sended to {args.Email}", args);
             }
             catch (SmtpCommandException smtpEx)
