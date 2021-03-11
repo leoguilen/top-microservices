@@ -6,16 +6,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["src/TOP.IdentityService.WebApi/TOP.IdentityService.WebApi.csproj", "src/TOP.IdentityService.WebApi/"]
-RUN dotnet restore "src/TOP.IdentityService.WebApi/TOP.IdentityService.WebApi.csproj"
+COPY ["src/", "."]
+RUN dotnet restore "TOP.NotificationConsumer.ConsoleApp/TOP.NotificationConsumer.ConsoleApp.csproj"
 COPY . .
-WORKDIR "/src/src/TOP.IdentityService.WebApi"
-RUN dotnet build "TOP.IdentityService.WebApi.csproj" -c Release -o /app/build
+WORKDIR "/src/TOP.NotificationConsumer.ConsoleApp"
+RUN dotnet build "TOP.NotificationConsumer.ConsoleApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TOP.IdentityService.WebApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "TOP.NotificationConsumer.ConsoleApp.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TOP.IdentityService.WebApi.dll"]
+ENTRYPOINT ["dotnet", "TOP.NotificationConsumer.ConsoleApp.dll"]

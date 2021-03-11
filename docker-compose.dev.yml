@@ -1,10 +1,85 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  identity-sql-db:
+  top-identity-api:
+    build: services/top-identity-api/
+    container_name: top-identity-api
+    hostname: top-identity-api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:IdentityConnection=Data Source=sql-db;Initial Catalog=IdentityDB;User=sa;Password=srvSql21#
+      - Jwt:Secret=s8dfbTp-7c3sML2KqZBAJpuE4PBchr0069neLAta0Mo
+      - Jwt:Audience=http://top-identity-api/
+      - RabbitMq:HostName=rabbitmq
+      - Elastic:Uri=http://elasticsearch:9200/
+    ports:
+      - "5001:80"
+    depends_on:
+      - sql-db
+      - rabbitmq
+      - elasticsearch
+    networks:
+      - top-net
+
+  top-notification-consumer:
+    build: services/top-notification-consumer/
+    container_name: top-notification-consumer
+    hostname: top-notification-consumer
+    restart: always
+    environment:
+      - RabbitMq:HostName=rabbitmq
+      - SmtpConfig:SenderEmail=<EMAIL>
+      - SmtpConfig:Account=<EMAIL>
+      - SmtpConfig:Password=<PASSWORD>
+      - Elastic:Uri=http://elasticsearch:9200/
+    depends_on:
+      - rabbitmq
+      - elasticsearch
+    networks:
+      - top-net
+
+  top-profile-api:
+    build: services/top-profile-api/
+    container_name: top-profile-api
+    hostname: top-profile-api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:ProfileDbConnection=Data Source=sql-db;Initial Catalog=ProfileDB;User=sa;Password=srvSql21#
+      - Jwt:Secret=s8dfbTp-7c3sML2KqZBAJpuE4PBchr0069neLAta0Mo
+      - Jwt:Audience=http://top-identity-api/
+      - RabbitMq:HostName=rabbitmq
+      - Elastic:Uri=http://elasticsearch:9200/
+    ports:
+      - "5002:80"
+    depends_on:
+      - sql-db
+      - rabbitmq
+      - elasticsearch
+    networks:
+      - top-net
+
+  top-sync-consumer:
+    build: services/top-sync-consumer/
+    container_name: top-sync-consumer
+    hostname: top-sync-consumer
+    restart: always
+    environment:
+      - RabbitMq:HostName=rabbitmq
+      - ConnectionStrings:ProfileDbConnection=Data Source=sql-db;Initial Catalog=ProfileDB;User=sa;Password=srvSql21#
+      - Elastic:Uri=http://elasticsearch:9200/
+    depends_on:
+      - sql-db
+      - rabbitmq
+      - elasticsearch
+    networks:
+      - top-net
+
+  sql-db:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: identity-sql-db
-    hostname: identity-sql-db
+    container_name: sql-db
+    hostname: sql-db
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=srvSql21#
@@ -13,12 +88,10 @@ services:
       - "1433:1433"
     volumes:
       - type: volume
-        source: identity-sql-db-data
+        source: sql-db-data
         target: /var/opt/mssql
     networks:
       - top-net
-
-  # tools
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -78,15 +151,20 @@ services:
       - top-net
 
 volumes:
-  identity-sql-db-data:
+  sql-db-data:
+    name: sql-db-data
     driver: local
   rabbit-data:
+    name: rabbit-data
     driver: local
   esdata:
+    name: esdata
     driver: local
   logs:
+    name: logs
     driver: local
 
 networks:
   top-net:
+    name: top-net
     driver: bridge
