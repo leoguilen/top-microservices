@@ -43,4 +43,6 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"leoguilen_top-microservices" /o:"sonarcloud-github-key" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build ./services/top-identity-api/TOP.IdentityService.sln
           dotnet build ./services/top-notification-consumer/TOP.NotificationConsumer.sln
+          dotnet build ./services/top-profile-api/TOP.ProfileService.sln
+          dotnet build ./services/top-sync-consumer/TOP.SyncConsumer.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
