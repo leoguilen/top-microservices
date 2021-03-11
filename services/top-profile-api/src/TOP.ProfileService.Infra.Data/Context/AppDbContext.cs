@@ -11,6 +11,7 @@ namespace TOP.ProfileService.Infra.Data.Context
 
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserProfileDetails> UserProfileDetails { get; set; }
+        private DbSet<LastSynchronization> LastSynchronizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
